@@ -1,5 +1,12 @@
-float rotX=0,rotY=0;
+float rotX=0,rotY=0;//回転軸;
+int score=0;//点数
 int[][][] box = new int [4][4][4];
+
+class a{
+
+}
+
+
 void setup() {
   size(640, 640, P3D);
   startbox();
@@ -7,12 +14,11 @@ void setup() {
 
 void draw() {
   background(120);
-  fill(255);
-  line(0,0,100,100);
+  drawscore();
   translate(width / 2, height / 2, -100);
   rotateX(rotX);
   rotateY(rotY);
-  
+  drawaxis();
   for(int i = 0; i < 4; i++){
     for(int j = 0; j < 4; j++){
       for(int k = 0; k < 4; k++){
@@ -21,17 +27,41 @@ void draw() {
     }
   }
 }
+
 void cheat(){
   for(int i = 0; i < 4; i++){
     for(int j = 0; j < 4; j++){
       for(int k = 0; k < 4; k++){
-        box[i][j][k] = 25;
+        box[i][j][k] = 16;
       }
     }
   }
-
 }
+
+void drawscore(){
+  fill(255);
+  textSize(50);
+  textAlign(LEFT,CENTER);
+  text(score,50,50);
+}
+
+void drawaxis(){
+  stroke(255,0,0);
+  line(0,0,0,400,0,0);
+  stroke(0,255,0);
+  line(0,0,0,0,400,0);
+  stroke(0,0,255);
+  line(0,0,0,0,0,400);
+  stroke(0,255,255);
+  line(0,0,0,-400,0,0);
+  stroke(255,0,255);
+  line(0,0,0,0,-400,0);
+  stroke(255,255,0);
+  line(0,0,0,0,0,-400);
+}
+
 void startbox(){
+  score = 0;
   for(int i = 0; i < 4; i++){
     for(int j = 0; j < 4; j++){
       for(int k = 0; k < 4; k++){
@@ -39,7 +69,9 @@ void startbox(){
       }
     }
   }
+  spawnNumber();
 }
+
 void keyPressed(){
   
   if( key == 'd' ){ //right
@@ -86,8 +118,14 @@ void keyPressed(){
   else if( keyCode == RIGHT){
     rotY = rotY + 0.1;
   }
+  else if( key == 'f'){
+    rotY = 0;
+    rotX = 0;
+  }
 }
+
 void drawTextOnCube(float x,float y,float z,int c) {
+  stroke(0,0,0);
   float s = 50; // 立方体のサイズ
   int pow = (int)pow(2,c);
   translate(x, y, z);
@@ -105,23 +143,7 @@ void drawTextOnCube(float x,float y,float z,int c) {
   else if( c == 11 ) fill(237,194,45);
   else if( c == 12 ) fill(97,216,146);
   else if( c == 13 ) fill(39,187,102);
-  else if( c == 14 ) fill(35,143,83);
-  else if( c == 15 ) fill(35,141,116);
-  else if( c == 16 ) fill(35,141,151);
-  else if( c == 17 ) fill(35,167,182);
-  else if( c == 18 ) fill(35,167,201);
-  else if( c == 19 ) fill(35,141,116);
-  else if( c == 20 ) fill(35,209,236);
-  else if( c == 21 ) fill(35,164,234);
-  else if( c == 22 ) fill(35,138,234);
-  else if( c == 23 ) fill(35,114,234);
-  else if( c == 24 ) fill(35,85,234);
-  else if( c == 25 ) fill(51,35,234);
-  else if( c == 26 ) fill(65,35,234);
-  else if( c == 27 ) fill(95,25,234);
-  else if( c == 28 ) fill(124,35,234);
-  else if( c == 29 ) fill(144,35,234);
-  else if( c >= 30 ) fill(0,0,0);
+  else if( c >= 14 ) fill(35,143,83);
   box(s);
   textAlign(CENTER,CENTER);
   
@@ -170,12 +192,14 @@ void drawTextOnCube(float x,float y,float z,int c) {
 }
 
 void spawnNumber(){
-  for(int h = 0; h < 4; h++){
-    int x = (int)random(0,3);
-    int y = (int)random(0,3);
-    int z = (int)random(0,3);
-    int r = (int)random(1,2);
-    if( box[x][y][z] == 0) box[x][y][z] = r;
+  for(int i = 0; i < 8; i++){
+    int x = (int)random(0,4);
+    int y = (int)random(0,4);
+    int z = (int)random(0,4);
+    int r = (int)random(1,3);
+    if( box[x][y][z] == 0) {
+      box[x][y][z] = r;
+    }
     
   }
 }
@@ -184,13 +208,16 @@ void boxmove_right(){
   for(int k = 0; k < 4; k++){//z
     for(int j = 0; j < 4; j++){//y
       for(int i = 2; i > -1; i--){//x
-        if( box[i][j][k] != 0 && box[i][j][k] == box[i+1][j][k] ){//前のブロックと数字が同じ場合、前の数字を2倍にする。
-           box[i+1][j][k] = box[i+1][j][k] + 1;
-           box[i][j][k] = 0;
-        }
-        else if( box[i][j][k] != 0 && box[i+1][j][k] == 0 ){//前が空白の場合、ブロックを進める
-           box[i+1][j][k] = box[i][j][k];
-           box[i][j][k] = 0;
+        for(int n = i; n < 3; n++){//一回の操作でブロックが端まで移動できるようにする。
+          if( box[n][j][k] != 0 && box[n][j][k] == box[n+1][j][k] ){//前のブロックと数字が同じ場合、前の数字を2倍にする。
+             box[n+1][j][k] = box[n+1][j][k] + 1;
+             score = score + (int)pow(2,box[n][j][k]+1);//合成した数字が点数として入る。
+             box[n][j][k] = 0;
+          }
+          else if( box[n][j][k] != 0 && box[n+1][j][k] == 0 ){//前が空白の場合、ブロックを進める
+             box[n+1][j][k] = box[n][j][k];
+             box[n][j][k] = 0;
+          }
         }
       }
     }
@@ -201,13 +228,16 @@ void boxmove_left(){
   for(int k = 0; k < 4; k++){//z
     for(int j = 0; j < 4; j++){//y
       for(int i = 1; i < 4; i++){//x
-        if( box[i][j][k] != 0 && box[i][j][k] == box[i-1][j][k] ){//前のブロックと数字が同じ場合、前の数字を2倍にする。
-           box[i-1][j][k] = box[i-1][j][k] + 1;
-           box[i][j][k] = 0;
-        }
-        else if( box[i][j][k] != 0 && box[i-1][j][k] == 0 ){//前が空白の場合、ブロックを進める
-           box[i-1][j][k] = box[i][j][k];
-           box[i][j][k] = 0;
+        for(int n = i; n > 0; n--){
+          if( box[n][j][k] != 0 && box[n][j][k] == box[n-1][j][k] ){//前のブロックと数字が同じ場合、前の数字を2倍にする。
+             box[n-1][j][k] = box[n-1][j][k] + 1;
+             score = score + (int)pow(2,box[n][j][k]+1);//合成した数字が点数として入る。
+             box[n][j][k] = 0;
+          }
+          else if( box[n][j][k] != 0 && box[n-1][j][k] == 0 ){//前が空白の場合、ブロックを進める
+             box[n-1][j][k] = box[n][j][k];
+             box[n][j][k] = 0;
+          }
         }
       }
     }
@@ -218,13 +248,16 @@ void boxmove_down(){
   for(int k = 0; k < 4; k++){//z
     for(int i = 0; i < 4; i++){//x
       for(int j = 2; j > -1; j--){//y
-        if( box[i][j][k] != 0 && box[i][j][k] == box[i][j+1][k] ){//前のブロックと数字が同じ場合、前の数字を2倍にする。
-           box[i][j+1][k] = box[i][j+1][k] + 1;
-           box[i][j][k] = 0;
-        }
-        else if( box[i][j][k] != 0 && box[i][j+1][k] == 0 ){//前が空白の場合、ブロックを進める
-           box[i][j+1][k] = box[i][j][k];
-           box[i][j][k] = 0;
+        for(int n = j; n < 3; n++){//一回の操作でブロックが端まで移動できるようにする。
+          if( box[i][n][k] != 0 && box[i][n][k] == box[i][n+1][k] ){//前のブロックと数字が同じ場合、前の数字を2倍にする。
+             box[i][n+1][k] = box[i][n+1][k] + 1;
+             score = score + (int)pow(2,box[i][n][k]+1);//合成した数字が点数として入る。
+             box[i][n][k] = 0;
+          }
+          else if( box[i][n][k] != 0 && box[i][n+1][k] == 0 ){//前が空白の場合、ブロックを進める
+             box[i][n+1][k] = box[i][n][k];
+             box[i][n][k] = 0;
+          }
         }
       }
     }
@@ -235,13 +268,16 @@ void boxmove_up(){
   for(int k = 0; k < 4; k++){//z
     for(int i = 0; i < 4; i++){//x
       for(int j = 1; j < 4; j++){//y
-        if( box[i][j][k] != 0 && box[i][j][k] == box[i][j-1][k] ){//前のブロックと数字が同じ場合、前の数字を2倍にする。
-           box[i][j-1][k] = box[i][j-1][k] + 1;
-           box[i][j][k] = 0;
-        }
-        else if( box[i][j][k] != 0 && box[i][j-1][k] == 0 ){//前が空白の場合、ブロックを進める
-           box[i][j-1][k] = box[i][j][k];
-           box[i][j][k] = 0;
+        for(int n = j; n > 0; n--){
+          if( box[i][n][k] != 0 && box[i][n][k] == box[i][n-1][k] ){//前のブロックと数字が同じ場合、前の数字を2倍にする。
+             box[i][n-1][k] = box[i][n-1][k] + 1;
+             score = score + (int)pow(2,box[i][n][k]+1);//合成した数字が点数として入る。
+             box[i][n][k] = 0;
+          }
+          else if( box[i][n][k] != 0 && box[i][n-1][k] == 0 ){//前が空白の場合、ブロックを進める
+             box[i][n-1][k] = box[i][n][k];
+             box[i][n][k] = 0;
+          }
         }
       }
     }
@@ -252,13 +288,16 @@ void boxmove_back(){
   for(int j = 0; j < 4; j++){//y
     for(int i = 0; i < 4; i++){//x
       for(int k = 2; k > -1; k--){//z
-        if( box[i][j][k] != 0 && box[i][j][k] == box[i][j][k+1] ){//前のブロックと数字が同じ場合、前の数字を2倍にする。
-           box[i][j][k+1] = box[i][j][k+1] + 1;
-           box[i][j][k] = 0;
-        }
-        else if( box[i][j][k] != 0 && box[i][j][k+1] == 0 ){//前が空白の場合、ブロックを進める
-           box[i][j][k+1] = box[i][j][k];
-           box[i][j][k] = 0;
+        for(int n = k; n < 3; n++){//一回の操作でブロックが端まで移動できるようにする。
+          if( box[i][j][n] != 0 && box[i][j][n] == box[i][j][n+1] ){//前のブロックと数字が同じ場合、前の数字を2倍にする。
+             box[i][j][n+1] = box[i][j][n+1] + 1;
+             score = score + (int)pow(2,box[i][j][n]+1);//合成した数字が点数として入る。
+             box[i][j][n] = 0;
+          }
+          else if( box[i][j][n] != 0 && box[i][j][n+1] == 0 ){//前が空白の場合、ブロックを進める
+             box[i][j][n+1] = box[i][j][n];
+             box[i][j][n] = 0;
+          }
         }
       }
     }
@@ -269,13 +308,16 @@ void boxmove_front(){
   for(int j = 0; j < 4; j++){//y
     for(int i = 0; i < 4; i++){//x
       for(int k = 1; k < 4; k++){//z
-        if( box[i][j][k] != 0 && box[i][j][k] == box[i][j][k-1] ){//前のブロックと数字が同じ場合、前の数字を2倍にする。
-           box[i][j][k-1] = box[i][j][k-1] + 1;
-           box[i][j][k] = 0;
-        }
-        else if( box[i][j][k] != 0 && box[i][j][k-1] == 0 ){//前が空白の場合、ブロックを進める
-           box[i][j][k-1] = box[i][j][k];
-           box[i][j][k] = 0;
+        for(int n = k; n > 0; n--){
+          if( box[i][j][n] != 0 && box[i][j][n] == box[i][j][n-1] ){//前のブロックと数字が同じ場合、前の数字を2倍にする。
+             box[i][j][n-1] = box[i][j][n-1] + 1;
+             score = score + (int)pow(2,box[i][j][n]+1);//合成した数字が点数として入る。
+             box[i][j][n] = 0;
+          }
+          else if( box[i][j][n] != 0 && box[i][j][n-1] == 0 ){//前が空白の場合、ブロックを進める
+             box[i][j][n-1] = box[i][j][n];
+             box[i][j][n] = 0;
+          }
         }
       }
     }
