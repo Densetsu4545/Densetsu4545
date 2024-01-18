@@ -109,7 +109,7 @@ void keyPressed(){
  else if( keyCode == UP){//camera up
     rotX = rotX + 0.1;
   }
-  else if( keyCode == DOWN){camera down
+  else if( keyCode == DOWN){//camera down
     rotX = rotX - 0.1;
   }
   else if( keyCode == LEFT){//camera left
