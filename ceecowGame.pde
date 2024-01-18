@@ -82,43 +82,43 @@ void keyPressed(){
     boxmove_left();
     spawnNumber();
   }
-  else if( keyCode == SHIFT){
+  else if( keyCode == SHIFT){//down
     boxmove_down();
     spawnNumber();
   }
-  else if( key == ' '){
+  else if( key == ' '){//up
     boxmove_up();
     spawnNumber();
   }
-  else if( key == 'w'){
+  else if( key == 'w'){//front
     boxmove_front();
     spawnNumber();
   }
-  else if( key == 's'){
+  else if( key == 's'){//back
     boxmove_back();
     spawnNumber();
   }
-  else if( key == 'c'){
+  else if( key == 'c'){//cheat mode
     cheat();
     spawnNumber();
   }
-  else if( key == 'r'){
+  else if( key == 'r'){//reset
     startbox();
     spawnNumber();
   }
- else if( keyCode == UP){
+ else if( keyCode == UP){//camera up
     rotX = rotX + 0.1;
   }
-  else if( keyCode == DOWN){
+  else if( keyCode == DOWN){camera down
     rotX = rotX - 0.1;
   }
-  else if( keyCode == LEFT){
+  else if( keyCode == LEFT){//camera left
     rotY = rotY - 0.1;
   }
-  else if( keyCode == RIGHT){
+  else if( keyCode == RIGHT){//camera right
     rotY = rotY + 0.1;
   }
-  else if( key == 'f'){
+  else if( key == 'f'){//camera reset
     rotY = 0;
     rotX = 0;
   }
@@ -129,21 +129,21 @@ void drawTextOnCube(float x,float y,float z,int c) {
   float s = 50; // 立方体のサイズ
   int pow = (int)pow(2,c);
   translate(x, y, z);
-  if( c == 0 )noFill();
-  else if( c == 1 ) fill(238,228,218);
-  else if( c == 2 ) fill(237,224,200);
-  else if( c == 3 ) fill(242,177,121);
-  else if( c == 4 ) fill(245,149,99);
-  else if( c == 5 ) fill(246,124,96);
-  else if( c == 6 ) fill(246,94,59);
-  else if( c == 7 ) fill(237,207,115);
-  else if( c == 8 ) fill(237,204,98);
-  else if( c == 9 ) fill(237,200,80);
-  else if( c == 10 ) fill(237,197,63);
-  else if( c == 11 ) fill(237,194,45);
-  else if( c == 12 ) fill(97,216,146);
-  else if( c == 13 ) fill(39,187,102);
-  else if( c >= 14 ) fill(35,143,83);
+  if( c == 0 )noFill();//0
+  else if( c == 1 ) fill(238,228,218);//2
+  else if( c == 2 ) fill(237,224,200);//4
+  else if( c == 3 ) fill(242,177,121);//8
+  else if( c == 4 ) fill(245,149,99);//16
+  else if( c == 5 ) fill(246,124,96);//32
+  else if( c == 6 ) fill(246,94,59);//64
+  else if( c == 7 ) fill(237,207,115);//128
+  else if( c == 8 ) fill(237,204,98);//256
+  else if( c == 9 ) fill(237,200,80);//512
+  else if( c == 10 ) fill(237,197,63);//1024
+  else if( c == 11 ) fill(237,194,45);//2048
+  else if( c == 12 ) fill(97,216,146);//4096
+  else if( c == 13 ) fill(39,187,102);//8192
+  else if( c >= 14 ) fill(35,143,83);//over 16384
   box(s);
   textAlign(CENTER,CENTER);
   
@@ -196,7 +196,7 @@ void spawnNumber(){
     int x = (int)random(0,4);
     int y = (int)random(0,4);
     int z = (int)random(0,4);
-    int r = (int)random(1,3);
+    int r = (int)random(1,3);//2 or 4
     if( box[x][y][z] == 0) {
       box[x][y][z] = r;
     }
